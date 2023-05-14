@@ -1,0 +1,858 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "UE Capability Parser - OpenAPI 3.0",
+    "description": "This is the OpenApi specification of UE Capability Parser server mode. Find out more [here](https://github.com/HandyMenny/uecapabilityparser)",
+    "license": {
+      "name": "MIT",
+      "url": "https://raw.githubusercontent.com/HandyMenny/uecapabilityparser/main/LICENSE"
+    },
+    "version": "0.0.7"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "parse",
+      "description": "Parse Capabilities"
+    },
+    {
+      "name": "convert",
+      "description": "Convert Combos"
+    }
+  ],
+  "paths": {
+    "/parse/0.0.7/": {
+      "post": {
+        "tags": [
+          "parse"
+        ],
+        "summary": "Parse an ue capability",
+        "description": "Parse an ue capability",
+        "operationId": "parse",
+        "requestBody": {
+          "description": "Parse the provided capability",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capabilities"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/csv/0.0.7/": {
+      "post": {
+        "tags": [
+          "convert"
+        ],
+        "summary": "Convert combos to csv",
+        "description": "Convert combos to csv",
+        "operationId": "csv",
+        "requestBody": {
+          "description": "List of Combos and their type",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "example": "combo;band1;band2;band3;band4;class1;class2;class3;class4;mimo1;mimo2;mimo3;mimo4;ul1;ul2;ul3;ul4;ULmimo1;ULmimo2;ULmimo3;ULmimo4;DLmod1;DLmod2;DLmod3;DLmod4;ULmod1;ULmod2;ULmod3;ULmod4;bsc\n3C4A-0;3;;;;C;;;;4;;;;A;;;;1;;;;;;;;;;;;0\n3A4A-3A4-m7;3;3;;;A;A;;;4;4;;;A;;;;1;;;;;;;;;;;;0, 1, 2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ParseRequest": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "H",
+              "W",
+              "N",
+              "C",
+              "CNR",
+              "E",
+              "Q",
+              "QNR",
+              "M",
+              "O",
+              "QC"
+            ],
+            "example": "C"
+          },
+          "input": {
+            "type": "string",
+            "format": "byte",
+            "example": "M0EyQS0wOw=="
+          },
+          "inputNR": {
+            "type": "string",
+            "format": "byte",
+            "example": "M0EyQS0wOw=="
+          },
+          "inputENDC": {
+            "type": "string",
+            "format": "byte",
+            "example": "M0EyQS0wOw=="
+          },
+          "defaultNR": {
+            "type": "boolean",
+            "default": false,
+            "example": true
+          },
+          "multiple0xB826": {
+            "type": "boolean",
+            "default": false,
+            "example": true
+          }
+        },
+        "required": [
+          "type",
+          "input"
+        ]
+      },
+      "ConvertRequest": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "lteca",
+              "endc",
+              "nrca",
+              "nrdc"
+            ],
+            "example": "lteca"
+          },
+          "input": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ComboLte"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ComboEnDc"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ComboNr"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ComboNrDc"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "input"
+        ]
+      },
+      "Capabilities": {
+        "type": "object",
+        "properties": {
+          "lteca": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComboLte"
+            }
+          },
+          "endc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComboEnDc"
+            }
+          },
+          "nrca": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComboNr"
+            }
+          },
+          "nrdc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComboNrDc"
+            }
+          },
+          "lteBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandLteDetails"
+            }
+          },
+          "nrBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandNrDetails"
+            }
+          },
+          "nrNsaBandsEutra": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandNrDetails"
+            },
+            "example": [
+              {
+                "band": 78
+              },
+              {
+                "band": 79
+              }
+            ]
+          },
+          "nrSaBandsEutra": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandNrDetails"
+            },
+            "example": [
+              {
+                "band": 78
+              },
+              {
+                "band": 79
+              }
+            ]
+          },
+          "lteCategoryDl": {
+            "type": "number",
+            "example": 12,
+            "default": 0
+          },
+          "lteCategoryUl": {
+            "type": "number",
+            "example": 12,
+            "default": 0
+          },
+          "logType": {
+            "type": "string",
+            "example": "W"
+          },
+          "parserVersion": {
+            "type": "string",
+            "example": "0.0.7"
+          },
+          "timestamp": {
+            "type": "number",
+            "example": 1683384284779
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "logType",
+          "parserVersion",
+          "timestamp",
+          "metadata"
+        ]
+      },
+      "ComboLte": {
+        "type": "object",
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentLte"
+            }
+          },
+          "bcs": {
+            "$ref": "#/components/schemas/BCS"
+          }
+        },
+        "required": [
+          "components"
+        ]
+      },
+      "ComboEnDc": {
+        "type": "object",
+        "properties": {
+          "componentsLte": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentLte"
+            }
+          },
+          "componentsNr": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentNr"
+            }
+          },
+          "bcsNr": {
+            "$ref": "#/components/schemas/BCS"
+          },
+          "bcsEutra": {
+            "$ref": "#/components/schemas/BCS"
+          },
+          "bcsIntraEndc": {
+            "$ref": "#/components/schemas/BCS"
+          }
+        },
+        "required": [
+          "componentsLte",
+          "componentsNr"
+        ]
+      },
+      "ComboNr": {
+        "type": "object",
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentNr"
+            }
+          },
+          "bcs": {
+            "$ref": "#/components/schemas/BCS"
+          }
+        },
+        "required": [
+          "components"
+        ]
+      },
+      "ComboNrDc": {
+        "type": "object",
+        "properties": {
+          "componentsFr1": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentNr"
+            }
+          },
+          "componentsFr2": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentNr"
+            }
+          },
+          "bcs": {
+            "$ref": "#/components/schemas/BCS"
+          }
+        },
+        "required": [
+          "componentsFr1",
+          "componentsFr2"
+        ]
+      },
+      "ComponentLte": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "example": "1"
+          },
+          "bwClassDl": {
+            "type": "string",
+            "default": "0",
+            "example": "A"
+          },
+          "bwClassUl": {
+            "type": "string",
+            "default": "0",
+            "example": "A"
+          },
+          "mimoDl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "mimoUl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "modulationDl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "modulationUl": {
+            "$ref": "#/components/schemas/Modulation"
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "ComponentNr": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "example": "78"
+          },
+          "bwClassDl": {
+            "type": "string",
+            "default": "0",
+            "example": "A"
+          },
+          "bwClassUl": {
+            "type": "string",
+            "default": "0",
+            "example": "A"
+          },
+          "mimoDl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "mimoUl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "modulationDl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "modulationUl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "maxBw": {
+            "type": "number",
+            "default": 0,
+            "example": 100
+          },
+          "bw90mhzSupported": {
+            "type": "boolean",
+            "default": false,
+            "example": true
+          },
+          "maxScs": {
+            "type": "number",
+            "default": 0,
+            "example": 30
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "BandLteDetails": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "example": "1"
+          },
+          "mimoDl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "mimoUl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "modulationDl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "modulationUl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "powerClass": {
+            "$ref": "#/components/schemas/PowerClass"
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "BandNrDetails": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "example": "78"
+          },
+          "mimoDl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "mimoUl": {
+            "$ref": "#/components/schemas/Mimo"
+          },
+          "modulationDl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "modulationUl": {
+            "$ref": "#/components/schemas/Modulation"
+          },
+          "powerClass": {
+            "$ref": "#/components/schemas/PowerClass"
+          },
+          "maxUplinkDutyCycle": {
+            "type": "number",
+            "default": 100,
+            "example": 50
+          },
+          "bandwidths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BwsNr"
+            }
+          },
+          "rateMatchingLteCrs": {
+            "type": "boolean",
+            "default": false,
+            "example": true
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "Mimo": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SingleMimo"
+          },
+          {
+            "$ref": "#/components/schemas/MixedMimo"
+          },
+          {
+            "$ref": "#/components/schemas/EmptyMimo"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "single": "#/components/schemas/SingleMimo",
+            "mixed": "#/components/schemas/MixedMimo",
+            "empty": "#/components/schemas/EmptyMimo"
+          }
+        },
+        "example": {
+          "type": "single",
+          "value": 2
+        }
+      },
+      "EmptyMimo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "empty"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "MixedMimo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "mixed"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "SingleMimo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ModulationOrder": {
+        "type": "string",
+        "enum": [
+          "none",
+          "qam1024",
+          "qam16",
+          "qam256",
+          "qam64",
+          "qpsk"
+        ]
+      },
+      "Modulation": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SingleModulation"
+          },
+          {
+            "$ref": "#/components/schemas/MixedModulation"
+          },
+          {
+            "$ref": "#/components/schemas/EmptyModulation"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "single": "#/components/schemas/SingleModulation",
+            "mixed": "#/components/schemas/MixedModulation",
+            "empty": "#/components/schemas/EmptyModulation"
+          }
+        },
+        "example": {
+          "type": "single",
+          "value": "qam64"
+        }
+      },
+      "EmptyModulation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "empty"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "MixedModulation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "mixed"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ModulationOrder"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "SingleModulation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/ModulationOrder"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "PowerClass": {
+        "type": "string",
+        "enum": [
+          "none",
+          "pc1",
+          "pc1dot5",
+          "pc2",
+          "pc3",
+          "pc4",
+          "pc5",
+          "pc6",
+          "pc7"
+        ],
+        "example": "pc2"
+      },
+      "BwsNr": {
+        "type": "object",
+        "properties": {
+          "scs": {
+            "type": "number",
+            "example": 30
+          },
+          "bandwidthsDl": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              100,
+              80
+            ]
+          },
+          "bandwidthsUl": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              100,
+              80
+            ]
+          }
+        },
+        "required": [
+          "scs",
+          "bandwidthsDl",
+          "bandwidthsUl"
+        ]
+      },
+      "BCS": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SingleBCS"
+          },
+          {
+            "$ref": "#/components/schemas/MultiBCS"
+          },
+          {
+            "$ref": "#/components/schemas/AllBCS"
+          },
+          {
+            "$ref": "#/components/schemas/EmptyBCS"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "single": "#/components/schemas/SingleBCS",
+            "multi": "#/components/schemas/MultiBCS",
+            "all": "#/components/schemas/AllBCS",
+            "empty": "#/components/schemas/EmptyBCS"
+          }
+        },
+        "example": {
+          "type": "single",
+          "value": 0
+        }
+      },
+      "EmptyBCS": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "empty"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "AllBCS": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "all"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "MultiBCS": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "multi"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "SingleBCS": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      }
+    }
+  }
+}
