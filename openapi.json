@@ -522,7 +522,7 @@
           },
           "maxUplinkDutyCycle": {
             "type": "number",
-            "default": 100,
+            "default": 0,
             "example": 50
           },
           "bandwidths": {
