@@ -38,6 +38,10 @@ jobs:
           sed -i "s|href=\"index|href=\"dist/index|g" index.html
           # Update current release
           echo ${{ steps.swagger-ui.outputs.release_tag }} > swagger-ui.version
+          # Delete files not needed
+          rm dist/*es-bundle*
+          rm dist/*.map
+          rm dist/swagger-ui.js
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
