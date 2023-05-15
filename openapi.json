@@ -7,7 +7,7 @@
       "name": "MIT",
       "url": "https://raw.githubusercontent.com/HandyMenny/uecapabilityparser/main/LICENSE"
     },
-    "version": "0.0.7"
+    "version": "0.1.0"
   },
   "servers": [
     {
@@ -25,7 +25,7 @@
     }
   ],
   "paths": {
-    "/parse/0.0.7/": {
+    "/parse/0.1.0/": {
       "post": {
         "tags": [
           "parse"
@@ -61,7 +61,7 @@
         }
       }
     },
-    "/csv/0.0.7/": {
+    "/csv/0.1.0/": {
       "post": {
         "tags": [
           "convert"
@@ -280,7 +280,7 @@
           },
           "parserVersion": {
             "type": "string",
-            "example": "0.0.7"
+            "example": "0.1.0"
           },
           "timestamp": {
             "type": "number",
