@@ -44,7 +44,7 @@ jobs:
           rm dist/*es-bundle*
           rm dist/*.map
           rm dist/swagger-ui.js
-          rm oauth2-redirect.html          
+          rm dist/oauth2-redirect.html          
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
