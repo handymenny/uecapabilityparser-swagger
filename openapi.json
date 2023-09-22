@@ -1,17 +1,35 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
-    "title": "UE Capability Parser - OpenAPI 3.0",
+    "title": "UE Capability Parser - OpenAPI 3.1",
     "description": "This is the OpenApi specification of UE Capability Parser server mode. Find out more [here](https://github.com/HandyMenny/uecapabilityparser)",
     "license": {
       "name": "MIT",
       "url": "https://raw.githubusercontent.com/HandyMenny/uecapabilityparser/main/LICENSE"
     },
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "servers": [
     {
-      "url": "http://localhost:8080"
+      "url": "/"
+    },
+    {
+      "url": "{scheme}://{domain}:{port}/",
+      "variables": {
+        "scheme": {
+          "enum": [
+            "http",
+            "https"
+          ],
+          "default": "http"
+        },
+        "domain": {
+          "default": "localhost"
+        },
+        "port": {
+          "default": "8080"
+        }
+      }
     }
   ],
   "tags": [
@@ -21,20 +39,28 @@
     },
     {
       "name": "convert",
-      "description": "Convert Combos"
+      "description": "Convert Capabilities"
+    },
+    {
+      "name": "store",
+      "description": "Manage stored capabilities"
+    },
+    {
+      "name": "version",
+      "description": "Get parser version"
     }
   ],
   "paths": {
-    "/parse/0.1.0/": {
+    "/parse/": {
       "post": {
         "tags": [
           "parse"
         ],
-        "summary": "Parse an ue capability",
-        "description": "Parse an ue capability",
+        "summary": "Parse an UE Capability",
+        "description": "Parse an UE Capability",
         "operationId": "parse",
         "requestBody": {
-          "description": "Parse the provided capability",
+          "description": "UE Capability",
           "content": {
             "application/json": {
               "schema": {
@@ -56,12 +82,22 @@
             }
           },
           "400": {
-            "description": "Invalid input"
+            "description": "Invalid input",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Bad Request"
+                  ]
+                }
+              }
+            }
           }
         }
       }
     },
-    "/csv/0.1.0/": {
+    "/csv/": {
       "post": {
         "tags": [
           "convert"
@@ -87,15 +123,217 @@
               "text/csv": {
                 "schema": {
                   "type": "string",
-                  "example": "combo;band1;band2;band3;band4;class1;class2;class3;class4;mimo1;mimo2;mimo3;mimo4;ul1;ul2;ul3;ul4;ULmimo1;ULmimo2;ULmimo3;ULmimo4;DLmod1;DLmod2;DLmod3;DLmod4;ULmod1;ULmod2;ULmod3;ULmod4;bsc\n3C4A-0;3;;;;C;;;;4;;;;A;;;;1;;;;;;;;;;;;0\n3A4A-3A4-m7;3;3;;;A;A;;;4;4;;;A;;;;1;;;;;;;;;;;;0, 1, 2"
+                  "examples": [
+                    "combo;band1;band2;band3;band4;class1;class2;class3;class4;mimo1;mimo2;mimo3;mimo4;ul1;ul2;ul3;ul4;ULmimo1;ULmimo2;ULmimo3;ULmimo4;DLmod1;DLmod2;DLmod3;DLmod4;ULmod1;ULmod2;ULmod3;ULmod4;bcs\n3C4A-0;3;;;;C;;;;4;;;;A;;;;1;;;;;;;;;;;;0\n3A4A-3A4-m7;3;3;;;A;A;;;4;4;;;A;;;;1;;;;;;;;;;;;0, 1, 2"
+                  ]
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid input"
+            "description": "Invalid input",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "Bad Request"
+                  ]
+                }
+              }
+            }
           }
         }
+      }
+    },
+    "/version": {
+      "get": {
+        "tags": [
+          "version"
+        ],
+        "summary": "Get Parser Version",
+        "description": "Get Parser Version",
+        "operationId": "version",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "examples": [
+                        "0.2.0"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/status": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Check if store is enabled",
+        "description": "Check if store is enabled",
+        "operationId": "store-status",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean",
+                      "examples": [
+                        "true"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "enabled"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/list": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get a list of stored capabilities indexes",
+        "description": "Get a list of stored capabilities indexes",
+        "operationId": "store-list",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IndexLine"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/store/getItem": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get the index of a stored capability",
+        "description": "Get the index of a stored capability",
+        "operationId": "store-item",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexLine"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        ]
+      }
+    },
+    "/store/getInput": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get Stored Input",
+        "description": "Get Stored Input",
+        "operationId": "store-input",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/octet-stream": {
+                "example": "combo;band1;band2;band3;band4;class1;class2;class3;class4;mimo1;mimo2;mimo3;mimo4;ul1;ul2;ul3;ul4;ULmimo1;ULmimo2;ULmimo3;ULmimo4;DLmod1;DLmod2;DLmod3;DLmod4;ULmod1;ULmod2;ULmod3;ULmod4;bcs\n3C4A-0;3;;;;C;;;;4;;;;A;;;;1;;;;;;;;;;;;0\n3A4A-3A4-m7;3;3;;;A;A;;;4;4;;;A;;;;1;;;;;;;;;;;;0, 1, 2"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6-0"
+          }
+        ]
+      }
+    },
+    "/store/getOutput": {
+      "get": {
+        "tags": [
+          "store"
+        ],
+        "summary": "Get Stored Output",
+        "description": "Get the parser output of the given capability",
+        "operationId": "store-output",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Capabilities"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        ]
       }
     }
   },
@@ -113,37 +351,52 @@
               "CNR",
               "E",
               "Q",
+              "QLTE",
               "QNR",
               "M",
               "O",
-              "QC"
+              "QC",
+              "RF"
             ],
-            "example": "C"
+            "examples": [
+              "C"
+            ]
           },
           "input": {
             "type": "string",
-            "format": "byte",
-            "example": "M0EyQS0wOw=="
+            "contentEncoding": "base64",
+            "examples": [
+              "M0EyQS0wOw=="
+            ]
           },
           "inputNR": {
             "type": "string",
-            "format": "byte",
-            "example": "M0EyQS0wOw=="
+            "contentEncoding": "base64",
+            "examples": [
+              "M0EyQS0wOw=="
+            ]
           },
           "inputENDC": {
             "type": "string",
-            "format": "byte",
-            "example": "M0EyQS0wOw=="
+            "contentEncoding": "base64",
+            "examples": [
+              "M0EyQS0wOw=="
+            ]
           },
           "defaultNR": {
             "type": "boolean",
             "default": false,
-            "example": true
+            "examples": [
+              true
+            ]
           },
           "multiple0xB826": {
             "type": "boolean",
-            "default": false,
-            "example": true
+            "default": true,
+            "examples": [
+              true
+            ],
+            "deprecated": true
           }
         },
         "required": [
@@ -161,10 +414,12 @@
               "nrca",
               "nrdc"
             ],
-            "example": "lteca"
+            "examples": [
+              "lteca"
+            ]
           },
           "input": {
-            "anyOf": [
+            "oneOf": [
               {
                 "type": "array",
                 "items": {
@@ -239,58 +494,105 @@
           "nrNsaBandsEutra": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/BandNrDetails"
+              "$ref": "#/components/schemas/BandBoxed"
             },
-            "example": [
-              {
-                "band": 78
-              },
-              {
-                "band": 79
-              }
+            "examples": [
+              [
+                {
+                  "band": 78
+                },
+                {
+                  "band": 79
+                }
+              ]
             ]
           },
           "nrSaBandsEutra": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/BandNrDetails"
+              "$ref": "#/components/schemas/BandBoxed"
             },
-            "example": [
-              {
-                "band": 78
-              },
-              {
-                "band": 79
-              }
+            "examples": [
+              [
+                {
+                  "band": 78
+                },
+                {
+                  "band": 79
+                }
+              ]
             ]
           },
           "lteCategoryDl": {
             "type": "number",
-            "example": 12,
+            "examples": [
+              12
+            ],
             "default": 0
           },
           "lteCategoryUl": {
             "type": "number",
-            "example": 12,
+            "examples": [
+              12
+            ],
             "default": 0
+          },
+          "altTbsIndexes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "26a",
+                "33a",
+                "33b"
+              ]
+            ]
+          },
+          "ueCapFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IUeCapabilityFilter"
+            }
           },
           "logType": {
             "type": "string",
-            "example": "W"
+            "examples": [
+              "W"
+            ]
           },
           "parserVersion": {
             "type": "string",
-            "example": "0.1.0"
+            "examples": [
+              "0.2.0"
+            ]
           },
           "timestamp": {
             "type": "number",
-            "example": 1683384284779
+            "examples": [
+              1683384284779
+            ]
           },
           "metadata": {
             "type": "object",
             "additionalProperties": {
               "type": "string"
-            }
+            },
+            "examples": [
+              {
+                "description": "description",
+                "processingTime": "10 ms"
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "default": "",
+            "examples": [
+              "439e65a3-36b1-477a-a44d-117de86b094f"
+            ]
           }
         },
         "required": [
@@ -393,17 +695,23 @@
         "properties": {
           "band": {
             "type": "number",
-            "example": "1"
+            "examples": [
+              "1"
+            ]
           },
           "bwClassDl": {
             "type": "string",
             "default": "0",
-            "example": "A"
+            "examples": [
+              "A"
+            ]
           },
           "bwClassUl": {
             "type": "string",
             "default": "0",
-            "example": "A"
+            "examples": [
+              "A"
+            ]
           },
           "mimoDl": {
             "$ref": "#/components/schemas/Mimo"
@@ -427,17 +735,23 @@
         "properties": {
           "band": {
             "type": "number",
-            "example": "78"
+            "examples": [
+              "78"
+            ]
           },
           "bwClassDl": {
             "type": "string",
             "default": "0",
-            "example": "A"
+            "examples": [
+              "A"
+            ]
           },
           "bwClassUl": {
             "type": "string",
             "default": "0",
-            "example": "A"
+            "examples": [
+              "A"
+            ]
           },
           "mimoDl": {
             "$ref": "#/components/schemas/Mimo"
@@ -451,20 +765,47 @@
           "modulationUl": {
             "$ref": "#/components/schemas/Modulation"
           },
-          "maxBw": {
-            "type": "number",
-            "default": 0,
-            "example": 100
-          },
           "bw90mhzSupported": {
             "type": "boolean",
             "default": false,
-            "example": true
+            "examples": [
+              true
+            ]
           },
           "maxScs": {
             "type": "number",
             "default": 0,
-            "example": 30
+            "examples": [
+              30
+            ]
+          },
+          "maxBw": {
+            "type": "number",
+            "default": 0,
+            "examples": [
+              100
+            ],
+            "deprecated": true
+          },
+          "maxBwDl": {
+            "$ref": "#/components/schemas/Bandwidth"
+          },
+          "maxBwUl": {
+            "$ref": "#/components/schemas/Bandwidth"
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "BandBoxed": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "examples": [
+              "1"
+            ]
           }
         },
         "required": [
@@ -476,7 +817,9 @@
         "properties": {
           "band": {
             "type": "number",
-            "example": "1"
+            "examples": [
+              "1"
+            ]
           },
           "mimoDl": {
             "$ref": "#/components/schemas/Mimo"
@@ -503,7 +846,9 @@
         "properties": {
           "band": {
             "type": "number",
-            "example": "78"
+            "examples": [
+              "78"
+            ]
           },
           "mimoDl": {
             "$ref": "#/components/schemas/Mimo"
@@ -523,7 +868,9 @@
           "maxUplinkDutyCycle": {
             "type": "number",
             "default": 0,
-            "example": 50
+            "examples": [
+              50
+            ]
           },
           "bandwidths": {
             "type": "array",
@@ -534,7 +881,9 @@
           "rateMatchingLteCrs": {
             "type": "boolean",
             "default": false,
-            "example": true
+            "examples": [
+              true
+            ]
           }
         },
         "required": [
@@ -561,10 +910,12 @@
             "empty": "#/components/schemas/EmptyMimo"
           }
         },
-        "example": {
-          "type": "single",
-          "value": 2
-        }
+        "examples": [
+          {
+            "type": "single",
+            "value": 2
+          }
+        ]
       },
       "EmptyMimo": {
         "type": "object",
@@ -623,11 +974,10 @@
         "type": "string",
         "enum": [
           "none",
-          "qam1024",
           "qam16",
-          "qam256",
           "qam64",
-          "qpsk"
+          "qam256",
+          "qam1024"
         ]
       },
       "Modulation": {
@@ -650,10 +1000,12 @@
             "empty": "#/components/schemas/EmptyModulation"
           }
         },
-        "example": {
-          "type": "single",
-          "value": "qam64"
-        }
+        "examples": [
+          {
+            "type": "single",
+            "value": "qam64"
+          }
+        ]
       },
       "EmptyModulation": {
         "type": "object",
@@ -708,6 +1060,86 @@
           "value"
         ]
       },
+      "Bandwidth": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SingleBandwidth"
+          },
+          {
+            "$ref": "#/components/schemas/MixedBandwidth"
+          },
+          {
+            "$ref": "#/components/schemas/EmptyBandwidth"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "single": "#/components/schemas/SingleBandwidth",
+            "mixed": "#/components/schemas/MixedBandwidth",
+            "empty": "#/components/schemas/EmptyBandwidth"
+          }
+        },
+        "examples": [
+          {
+            "type": "single",
+            "value": "100"
+          }
+        ]
+      },
+      "EmptyBandwidth": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "empty"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "MixedBandwidth": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "mixed"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "SingleBandwidth": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
       "PowerClass": {
         "type": "string",
         "enum": [
@@ -721,23 +1153,29 @@
           "pc6",
           "pc7"
         ],
-        "example": "pc2"
+        "examples": [
+          "pc2"
+        ]
       },
       "BwsNr": {
         "type": "object",
         "properties": {
           "scs": {
             "type": "number",
-            "example": 30
+            "examples": [
+              30
+            ]
           },
           "bandwidthsDl": {
             "type": "array",
             "items": {
               "type": "number"
             },
-            "example": [
-              100,
-              80
+            "examples": [
+              [
+                100,
+                80
+              ]
             ]
           },
           "bandwidthsUl": {
@@ -745,9 +1183,11 @@
             "items": {
               "type": "number"
             },
-            "example": [
-              100,
-              80
+            "examples": [
+              [
+                100,
+                80
+              ]
             ]
           }
         },
@@ -781,10 +1221,12 @@
             "empty": "#/components/schemas/EmptyBCS"
           }
         },
-        "example": {
-          "type": "single",
-          "value": 0
-        }
+        "examples": [
+          {
+            "type": "single",
+            "value": 0
+          }
+        ]
       },
       "EmptyBCS": {
         "type": "object",
@@ -852,6 +1294,340 @@
           "type",
           "value"
         ]
+      },
+      "IUeCapabilityFilter": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UeCapabilityFilterLte"
+          },
+          {
+            "$ref": "#/components/schemas/UeCapabilityFilterNr"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "UeCapabilityFilterLte": "#/components/schemas/UeCapabilityFilterLte",
+            "UeCapabilityFilterNr": "#/components/schemas/UeCapabilityFilterNr"
+          }
+        }
+      },
+      "UeCapabilityFilterLte": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UeCapabilityFilterLte"
+            ]
+          },
+          "rat": {
+            "$ref": "#/components/schemas/Rat",
+            "examples": [
+              "EUTRA"
+            ]
+          },
+          "lteBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandBoxed"
+            }
+          },
+          "reducedFormat": {
+            "type": "boolean"
+          },
+          "reducedIntNonContComb": {
+            "type": "boolean"
+          },
+          "skipFallbackCombRequested": {
+            "type": "boolean"
+          },
+          "diffFallbackCombList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComboLte"
+            },
+            "examples": [
+              {
+                "components": [
+                  {
+                    "band": 1,
+                    "bwClassDl": "A",
+                    "bwClassUl": "A"
+                  },
+                  {
+                    "band": 3,
+                    "bwClassDl": "C"
+                  }
+                ]
+              }
+            ]
+          },
+          "maxCCsDl": {
+            "type": "number",
+            "default": 0,
+            "examples": [
+              5
+            ]
+          },
+          "maxCCsUl": {
+            "type": "number",
+            "default": 0,
+            "examples": [
+              2
+            ]
+          },
+          "includeNrDc": {
+            "type": "boolean"
+          },
+          "includeNeDc": {
+            "type": "boolean"
+          },
+          "omitEnDc": {
+            "type": "boolean"
+          },
+          "uplinkTxSwitchRequest": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "examples": [
+          {
+            "type": "UeCapabilityFilterLte",
+            "rat": "EUTRA",
+            "lteBands": [
+              {
+                "band": 1
+              }
+            ],
+            "reducedFormat": true,
+            "reducedIntNonContComb": true,
+            "skipFallbackCombRequested": true,
+            "diffFallbackCombList": {
+              "components": [
+                {
+                  "band": 1,
+                  "bwClassDl": "A",
+                  "bwClassUl": "A"
+                },
+                {
+                  "band": 3,
+                  "bwClassDl": "C"
+                }
+              ]
+            },
+            "maxCCsDl": 5,
+            "maxCCsUl": 2,
+            "includeNrDc": true,
+            "includeNeDc": true,
+            "omitEnDc": true,
+            "uplinkTxSwitchRequest": true
+          }
+        ]
+      },
+      "UeCapabilityFilterNr": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UeCapabilityFilterNr"
+            ]
+          },
+          "rat": {
+            "$ref": "#/components/schemas/Rat",
+            "examples": [
+              "NR"
+            ]
+          },
+          "lteBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandFilterLte"
+            }
+          },
+          "nrBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandFilterNr"
+            }
+          },
+          "eutraNrOnly": {
+            "type": "boolean"
+          },
+          "includeNrDc": {
+            "type": "boolean"
+          },
+          "includeNeDc": {
+            "type": "boolean"
+          },
+          "omitEnDc": {
+            "type": "boolean"
+          },
+          "uplinkTxSwitchRequest": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "examples": [
+          {
+            "type": "UeCapabilityFilterNr",
+            "rat": "NR",
+            "lteBands": [
+              {
+                "band": 1,
+                "bwClassDl": "A",
+                "bwClassUl": "A"
+              }
+            ],
+            "nrBands": [
+              {
+                "band": 1,
+                "maxBwDl": 100,
+                "maxBwUl": 100,
+                "maxCCsDl": 1,
+                "maxCCsUl": 1
+              }
+            ],
+            "includeNrDc": true,
+            "includeNeDc": true,
+            "omitEnDc": true,
+            "uplinkTxSwitchRequest": true,
+            "eutraNrOnly": true
+          }
+        ]
+      },
+      "BandFilterLte": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "examples": [
+              "1"
+            ]
+          },
+          "bwClassDl": {
+            "type": "string",
+            "default": "0",
+            "examples": [
+              "A"
+            ]
+          },
+          "bwClassUl": {
+            "type": "string",
+            "default": "0",
+            "examples": [
+              "A"
+            ]
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "BandFilterNr": {
+        "type": "object",
+        "properties": {
+          "band": {
+            "type": "number",
+            "examples": [
+              "1"
+            ]
+          },
+          "maxBwDl": {
+            "type": "number",
+            "default": "0",
+            "examples": [
+              "100"
+            ]
+          },
+          "maxBwUl": {
+            "type": "number",
+            "default": "0",
+            "examples": [
+              "100"
+            ]
+          },
+          "maxCCsDl": {
+            "type": "number",
+            "default": "0",
+            "examples": [
+              "1"
+            ]
+          },
+          "maxCCsUl": {
+            "type": "number",
+            "default": "0",
+            "examples": [
+              "1"
+            ]
+          }
+        },
+        "required": [
+          "band"
+        ]
+      },
+      "Rat": {
+        "type": "string",
+        "enum": [
+          "EUTRA",
+          "NR",
+          "EUTRA_NR"
+        ]
+      },
+      "IndexLine": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "examples": [
+              "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            ]
+          },
+          "timestamp": {
+            "type": "number",
+            "examples": [
+              1683384284779
+            ]
+          },
+          "description": {
+            "type": "string",
+            "examples": [
+              "Test"
+            ]
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "3fa85f64-5717-4562-b3fc-2c963f66afa6-0",
+                "3fa85f64-5717-4562-b3fc-2c963f66afa6-1"
+              ]
+            ]
+          },
+          "compressed": {
+            "type": "boolean",
+            "default": "false"
+          },
+          "defaultNR": {
+            "type": "boolean",
+            "default": "false"
+          },
+          "parserVersion": {
+            "type": "string",
+            "examples": [
+              "0.2.0"
+            ]
+          }
+        }
       }
     }
   }
