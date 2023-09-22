@@ -226,10 +226,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IndexLine"
-                  }
+                  "$ref": "#/components/schemas/LibraryIndex"
                 }
               }
             }
@@ -1578,6 +1575,17 @@
           "NR",
           "EUTRA_NR"
         ]
+      },
+      "LibraryIndex": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndexLine"
+            }
+          }
+        }
       },
       "IndexLine": {
         "type": "object",
