@@ -521,14 +521,14 @@
             ]
           },
           "lteCategoryDl": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               12
             ],
             "default": 0
           },
           "lteCategoryUl": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               12
             ],
@@ -566,7 +566,7 @@
             ]
           },
           "timestamp": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               1683384284779
             ]
@@ -691,7 +691,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "1"
             ]
@@ -731,7 +731,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "78"
             ]
@@ -770,14 +770,14 @@
             ]
           },
           "maxScs": {
-            "type": "number",
+            "type": "integer",
             "default": 0,
             "examples": [
               30
             ]
           },
           "maxBw": {
-            "type": "number",
+            "type": "integer",
             "default": 0,
             "examples": [
               100
@@ -799,7 +799,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "1"
             ]
@@ -813,7 +813,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "1"
             ]
@@ -842,7 +842,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "78"
             ]
@@ -863,7 +863,7 @@
             "$ref": "#/components/schemas/PowerClass"
           },
           "maxUplinkDutyCycle": {
-            "type": "number",
+            "type": "integer",
             "default": 0,
             "examples": [
               50
@@ -940,7 +940,7 @@
           "value": {
             "type": "array",
             "items": {
-              "type": "number"
+              "type": "integer"
             }
           }
         },
@@ -959,7 +959,7 @@
             ]
           },
           "value": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "required": [
@@ -1110,7 +1110,7 @@
           "value": {
             "type": "array",
             "items": {
-              "type": "number"
+              "type": "integer"
             }
           }
         },
@@ -1129,7 +1129,7 @@
             ]
           },
           "value": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "required": [
@@ -1158,7 +1158,7 @@
         "type": "object",
         "properties": {
           "scs": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               30
             ]
@@ -1166,7 +1166,7 @@
           "bandwidthsDl": {
             "type": "array",
             "items": {
-              "type": "number"
+              "type": "integer"
             },
             "examples": [
               [
@@ -1178,7 +1178,7 @@
           "bandwidthsUl": {
             "type": "array",
             "items": {
-              "type": "number"
+              "type": "integer"
             },
             "examples": [
               [
@@ -1265,7 +1265,7 @@
           "value": {
             "type": "array",
             "items": {
-              "type": "number"
+              "type": "integer"
             }
           }
         },
@@ -1284,7 +1284,7 @@
             ]
           },
           "value": {
-            "type": "number"
+            "type": "integer"
           }
         },
         "required": [
@@ -1361,14 +1361,14 @@
             ]
           },
           "maxCCsDl": {
-            "type": "number",
+            "type": "integer",
             "default": 0,
             "examples": [
               5
             ]
           },
           "maxCCsUl": {
-            "type": "number",
+            "type": "integer",
             "default": 0,
             "examples": [
               2
@@ -1502,7 +1502,7 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "1"
             ]
@@ -1530,34 +1530,34 @@
         "type": "object",
         "properties": {
           "band": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               "1"
             ]
           },
           "maxBwDl": {
-            "type": "number",
+            "type": "integer",
             "default": "0",
             "examples": [
               "100"
             ]
           },
           "maxBwUl": {
-            "type": "number",
+            "type": "integer",
             "default": "0",
             "examples": [
               "100"
             ]
           },
           "maxCCsDl": {
-            "type": "number",
+            "type": "integer",
             "default": "0",
             "examples": [
               "1"
             ]
           },
           "maxCCsUl": {
-            "type": "number",
+            "type": "integer",
             "default": "0",
             "examples": [
               "1"
@@ -1598,7 +1598,7 @@
             ]
           },
           "timestamp": {
-            "type": "number",
+            "type": "integer",
             "examples": [
               1683384284779
             ]
