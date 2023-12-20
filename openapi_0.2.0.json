@@ -7,7 +7,7 @@
       "name": "MIT",
       "url": "https://raw.githubusercontent.com/HandyMenny/uecapabilityparser/main/LICENSE"
     },
-    "version": "0.3.0"
+    "version": "0.2.0"
   },
   "servers": [
     {
@@ -46,8 +46,8 @@
       "description": "Manage stored capabilities"
     },
     {
-      "name": "status",
-      "description": "Get parser status"
+      "name": "version",
+      "description": "Get parser version"
     }
   ],
   "paths": {
@@ -64,7 +64,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RequestParse"
+                "$ref": "#/components/schemas/ParseRequest"
               }
             }
           },
@@ -93,95 +93,6 @@
                 }
               }
             }
-          },
-          "413": {
-            "description": "Request above max request size",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "examples": [
-                    "Content Too Large"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/multiPart/": {
-      "post": {
-        "tags": [
-          "parse"
-        ],
-        "summary": "Parse UE Capabilities",
-        "description": "Parse UE Capabilities",
-        "operationId": "multiPart",
-        "requestBody": {
-          "description": "UE Capability sources",
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "requests": {
-                    "type": "array",
-                    "description": "Array of RequestMultiPart",
-                    "items": {
-                      "$ref": "#/components/schemas/RequestMultiPart"
-                    }
-                  },
-                  "file[]": {
-                    "type": "array",
-                    "description": "Attached files",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiCapabilities"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "examples": [
-                    "Bad Request"
-                  ]
-                }
-              }
-            }
-          },
-          "413": {
-            "description": "Request above max request size",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "examples": [
-                    "Content Too Large"
-                  ]
-                }
-              }
-            }
           }
         }
       }
@@ -199,7 +110,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RequestCsv"
+                "$ref": "#/components/schemas/ConvertRequest"
               }
             }
           },
@@ -238,7 +149,7 @@
     "/version": {
       "get": {
         "tags": [
-          "status"
+          "version"
         ],
         "summary": "Get Parser Version",
         "description": "Get Parser Version",
@@ -254,7 +165,7 @@
                     "version": {
                       "type": "string",
                       "examples": [
-                        "0.3.0"
+                        "0.2.0"
                       ]
                     }
                   },
@@ -268,33 +179,10 @@
         }
       }
     },
-    "/status": {
-      "get": {
-        "tags": [
-          "status"
-        ],
-        "summary": "Get Server Status",
-        "description": "Get Server Status",
-        "operationId": "status",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ServerStatus"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/store/status": {
       "get": {
         "tags": [
-          "store",
-          "status"
+          "store"
         ],
         "summary": "Check if store is enabled",
         "description": "Check if store is enabled",
@@ -416,7 +304,7 @@
         "tags": [
           "store"
         ],
-        "summary": "Get Stored Capabilities",
+        "summary": "Get Stored Output",
         "description": "Get the parser output of the given capability",
         "operationId": "store-output",
         "responses": {
@@ -444,124 +332,29 @@
           }
         ]
       }
-    },
-    "/store/getMultiItem": {
-      "get": {
-        "tags": [
-          "store"
-        ],
-        "summary": "Get the index of a stored multicapability",
-        "description": "Get the index of a stored multicapability",
-        "operationId": "store-multiItem",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiIndexLine"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          }
-        ]
-      }
-    },
-    "/store/getMultiOutput": {
-      "get": {
-        "tags": [
-          "store"
-        ],
-        "summary": "Get Stored MultiCapabilities",
-        "description": "Get the parser output of the given multicapability",
-        "operationId": "store-multiOutput",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultiCapabilities"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          }
-        ]
-      }
     }
   },
   "components": {
     "schemas": {
-      "LogType": {
-        "type": "string",
-        "enum": [
-          "H",
-          "W",
-          "N",
-          "C",
-          "CNR",
-          "E",
-          "Q",
-          "QLTE",
-          "QNR",
-          "M",
-          "O",
-          "QC",
-          "RF",
-          "SHNR",
-          "P",
-          "DLF",
-          "QMDL",
-          "HDF",
-          "SDM"
-        ]
-      },
-      "LogTypeSingle": {
-        "type": "string",
-        "enum": [
-          "H",
-          "W",
-          "N",
-          "C",
-          "CNR",
-          "E",
-          "Q",
-          "QLTE",
-          "QNR",
-          "M",
-          "O",
-          "QC",
-          "RF"
-        ]
-      },
-      "RequestParse": {
+      "ParseRequest": {
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/LogTypeSingle",
+            "type": "string",
+            "enum": [
+              "H",
+              "W",
+              "N",
+              "C",
+              "CNR",
+              "E",
+              "Q",
+              "QLTE",
+              "QNR",
+              "M",
+              "O",
+              "QC",
+              "RF"
+            ],
             "examples": [
               "C"
             ]
@@ -594,11 +387,13 @@
               true
             ]
           },
-          "description": {
-            "type": "string",
+          "multiple0xB826": {
+            "type": "boolean",
+            "default": true,
             "examples": [
-              "Test"
-            ]
+              true
+            ],
+            "deprecated": true
           }
         },
         "required": [
@@ -606,50 +401,7 @@
           "input"
         ]
       },
-      "RequestMultiPart": {
-        "properties": {
-          "inputIndexes": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            },
-            "examples": [
-              "0"
-            ]
-          },
-          "type": {
-            "$ref": "#/components/schemas/LogType",
-            "examples": [
-              "H"
-            ]
-          },
-          "subTypes": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "LTE",
-                "ENDC",
-                "NR"
-              ]
-            },
-            "examples": [
-              "LTE"
-            ]
-          },
-          "description": {
-            "type": "string",
-            "examples": [
-              "Test"
-            ]
-          }
-        },
-        "required": [
-          "type",
-          "inputIndexes"
-        ]
-      },
-      "RequestCsv": {
+      "ConvertRequest": {
         "properties": {
           "type": {
             "type": "string",
@@ -689,13 +441,6 @@
                   "$ref": "#/components/schemas/ComboNrDc"
                 }
               }
-            ]
-          },
-          "newCsvFormat": {
-            "type": "boolean",
-            "default": false,
-            "examples": [
-              false
             ]
           }
         },
@@ -809,12 +554,15 @@
             }
           },
           "logType": {
-            "$ref": "#/components/schemas/LogTypeSingle"
+            "type": "string",
+            "examples": [
+              "W"
+            ]
           },
           "parserVersion": {
             "type": "string",
             "examples": [
-              "0.3.0"
+              "0.2.0"
             ]
           },
           "timestamp": {
@@ -1027,6 +775,14 @@
             "examples": [
               30
             ]
+          },
+          "maxBw": {
+            "type": "integer",
+            "default": 0,
+            "examples": [
+              100
+            ],
+            "deprecated": true
           },
           "maxBwDl": {
             "$ref": "#/components/schemas/Bandwidth"
@@ -1629,9 +1385,6 @@
           },
           "uplinkTxSwitchRequest": {
             "type": "boolean"
-          },
-          "segAllowed": {
-            "type": "boolean"
           }
         },
         "required": [
@@ -1667,8 +1420,7 @@
             "includeNrDc": true,
             "includeNeDc": true,
             "omitEnDc": true,
-            "uplinkTxSwitchRequest": true,
-            "segAllowed": true
+            "uplinkTxSwitchRequest": true
           }
         ]
       },
@@ -1713,9 +1465,6 @@
           },
           "uplinkTxSwitchRequest": {
             "type": "boolean"
-          },
-          "segAllowed": {
-            "type": "boolean"
           }
         },
         "required": [
@@ -1745,8 +1494,7 @@
             "includeNeDc": true,
             "omitEnDc": true,
             "uplinkTxSwitchRequest": true,
-            "eutraNrOnly": true,
-            "segAllowed": true
+            "eutraNrOnly": true
           }
         ]
       },
@@ -1836,17 +1584,8 @@
             "items": {
               "$ref": "#/components/schemas/IndexLine"
             }
-          },
-          "multiItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MultiIndexLine"
-            }
           }
-        },
-        "required": [
-          "items"
-        ]
+        }
       },
       "IndexLine": {
         "type": "object",
@@ -1893,146 +1632,10 @@
           "parserVersion": {
             "type": "string",
             "examples": [
-              "0.3.0"
+              "0.2.0"
             ]
           }
-        },
-        "required": [
-          "id",
-          "timestamp",
-          "description",
-          "inputs",
-          "parserVersion"
-        ]
-      },
-      "MultiIndexLine": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "examples": [
-              "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            ]
-          },
-          "timestamp": {
-            "type": "integer",
-            "examples": [
-              1683384284779
-            ]
-          },
-          "description": {
-            "type": "string",
-            "examples": [
-              "Test"
-            ]
-          },
-          "indexLineIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "examples": [
-              [
-                "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "4fa85f64-5717-4562-b3fc-2c963f66afa5"
-              ]
-            ]
-          },
-          "compressed": {
-            "type": "boolean",
-            "default": "false"
-          }
-        },
-        "required": [
-          "id",
-          "timestamp",
-          "description",
-          "indexLineIds"
-        ]
-      },
-      "MultiCapabilities": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "examples": [
-              "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            ]
-          },
-          "description": {
-            "type": "string",
-            "examples": [
-              "Test"
-            ]
-          },
-          "capabilitiesList": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Capabilities"
-            }
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
-      "ServerStatus": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string",
-            "examples": [
-              "0.3.0"
-            ]
-          },
-          "endpoints": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "examples": [
-                [
-                  "/swagger",
-                  "/parse",
-                  "/parse/multiPart",
-                  "/csv",
-                  "/openapi",
-                  "/swagger/openapi.json",
-                  "/store/status",
-                  "/store/list",
-                  "/store/getItem",
-                  "/store/getMultiItem",
-                  "/store/getOutput",
-                  "/store/getMultiOutput",
-                  "/store/getInput",
-                  "/version",
-                  "/status"
-                ]
-              ]
-            }
-          },
-          "logTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LogType"
-            }
-          },
-          "maxRequestSize": {
-            "type": "integer",
-            "format": "int64",
-            "examples": [
-              "256000000"
-            ]
-          }
-        },
-        "required": [
-          "version",
-          "endpoints",
-          "logTypes",
-          "maxRequestSize"
-        ]
+        }
       }
     }
   }

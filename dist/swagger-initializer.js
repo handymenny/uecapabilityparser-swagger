@@ -6,6 +6,10 @@ window.onload = function() {
     urls: [
       {
         url: "openapi.json",
+        name: "UE Capability Parser 0.3.0"
+      },
+      {
+        url: "openapi_0.2.0.json",
         name: "UE Capability Parser 0.2.0"
       },
       {
