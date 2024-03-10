@@ -22,6 +22,8 @@ jobs:
           RELEASE_TAG: ${{ steps.swagger-ui.outputs.release_tag }}
           SWAGGER_YAML: "openapi.json"
         run: |
+          # backup dist/swagger-initializer.js
+          cp dist/swagger-initializer.js swagger-initializer.js
           # Delete the dist directory and index.html
           rm -fr dist index.html
           # Download the release
@@ -42,7 +44,9 @@ jobs:
           rm dist/*es-bundle*
           rm dist/*.map
           rm dist/swagger-ui.js
-          rm dist/oauth2-redirect.html          
+          rm dist/oauth2-redirect.html   
+          # Restore swagger-initializer.js
+          mv -f swagger-initializer.js dist/swagger-initializer.js
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
